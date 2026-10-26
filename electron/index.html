@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Lab 2 — Smart Car Remote (WiFi)</title>
+    <style>
+      :root {
+        --bg: #1a1f24;
+        --panel: #243038;
+        --text: #e8eef2;
+        --muted: #8aa0ad;
+        --accent: #3dd68c;
+        --idle: #6b7c86;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: "Segoe UI", system-ui, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        padding: 24px;
+      }
+      h1 {
+        font-weight: 600;
+        font-size: 1.4rem;
+        margin: 0 0 8px;
+      }
+      .sub {
+        color: var(--muted);
+        margin-bottom: 24px;
+        font-size: 0.95rem;
+      }
+      .container {
+        display: flex;
+        gap: 32px;
+        flex-wrap: wrap;
+        align-items: flex-start;
+      }
+      .pad {
+        background: var(--panel);
+        border-radius: 12px;
+        padding: 20px 28px;
+        user-select: none;
+      }
+      .row {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin: 8px 0;
+      }
+      .key {
+        width: 64px;
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.6rem;
+        color: var(--idle);
+        background: #1a2228;
+        border-radius: 10px;
+        border: 2px solid #334048;
+        transition: color 0.1s, border-color 0.1s;
+      }
+      .key.active {
+        color: var(--accent);
+        border-color: var(--accent);
+      }
+      .stats {
+        background: var(--panel);
+        border-radius: 12px;
+        padding: 20px 24px;
+        min-width: 280px;
+        flex: 1;
+      }
+      .stats h2 {
+        font-size: 1.05rem;
+        margin: 0 0 12px;
+        font-weight: 600;
+      }
+      .stats ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .stats li {
+        padding: 8px 0;
+        border-bottom: 1px solid #334048;
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+      }
+      .stats li span.val {
+        font-variant-numeric: tabular-nums;
+        color: var(--accent);
+      }
+      .hint {
+        margin-top: 20px;
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+      #raw {
+        margin-top: 12px;
+        font-family: ui-monospace, monospace;
+        font-size: 0.75rem;
+        color: var(--muted);
+        word-break: break-all;
+      }
+      .cfg {
+        margin-bottom: 16px;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .cfg input {
+        background: #1a2228;
+        border: 1px solid #334048;
+        color: var(--text);
+        padding: 6px 10px;
+        border-radius: 6px;
+        width: 160px;
+      }
+      .cfg button {
+        background: var(--accent);
+        color: #102018;
+        border: none;
+        padding: 6px 14px;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>CS498 IoT — Lab 2 Smart Car Remote</h1>
+    <p class="sub">WiFi TCP control · arrows / WASD · live telemetry from the Pi</p>
+
+    <div class="cfg">
+      <label>Pi IP <input id="serverHost" type="text" value="192.168.10.188" /></label>
+      <label>Port <input id="serverPort" type="text" value="65432" style="width: 80px" /></label>
+      <button type="button" onclick="saveHost()">Apply</button>
+      <button type="button" onclick="sendCommand('stop')">Stop</button>
+    </div>
+
+    <div class="container">
+      <div class="pad">
+        <div class="row">
+          <div class="key" id="upArrow">⇧</div>
+        </div>
+        <div class="row">
+          <div class="key" id="leftArrow">⇦</div>
+          <div class="key" id="downArrow">⇩</div>
+          <div class="key" id="rightArrow">⇨</div>
+        </div>
+      </div>
+
+      <div class="stats">
+        <h2>Car information</h2>
+        <ul>
+          <li>Battery <span class="val" id="battery">—</span></li>
+          <li>Moving <span class="val" id="moving">stopped</span></li>
+          <li>Turning <span class="val" id="turning">no</span></li>
+          <li>Speed (m/s) <span class="val" id="speed">0.0</span></li>
+          <li>Distance (m) <span class="val" id="distance">0.0</span></li>
+          <li>Pi temp (°C) <span class="val" id="temp">—</span></li>
+        </ul>
+        <div id="raw"></div>
+      </div>
+    </div>
+
+    <p class="hint">
+      Hold W/A/S/D or arrow keys to drive. Release to stop. Status refreshes every 500&nbsp;ms.
+      Edit Pi IP above (use <code>hostname -I</code> on the Pi). Versions:
+      Node <span id="node-version"></span> · Electron <span id="electron-version"></span>
+    </p>
+
+    <script src="./index.js"></script>
+  </body>
+</html>

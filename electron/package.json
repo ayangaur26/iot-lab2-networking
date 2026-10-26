@@ -1,0 +1,14 @@
+{
+  "name": "lab2-car-remote",
+  "version": "1.0.0",
+  "description": "Lab 2 Electron remote control for Freenove Pi car (WiFi)",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "",
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "electron": "^28.3.3"
+  }
+}
